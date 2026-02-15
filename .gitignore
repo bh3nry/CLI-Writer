@@ -1,0 +1,29 @@
+Writer_Editor.modelfile
+
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+*.icloud
+dist/
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+.env
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
