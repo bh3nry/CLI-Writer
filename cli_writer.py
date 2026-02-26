@@ -2,11 +2,12 @@
 
 import sys
 import ollama
+import pandas as pd
 
 def main():
     """
-    Uses the 'pg-editor' Ollama model (based on qwen2.5:3b) to process and fix text.
-    For specific usage, the script assumes use of modelfiles.
+    Uses the pg-editor Ollama model (based on llama3.2:3b) to process and fix text.
+    For specific usage, the script assumes use of `Modelfiles`.
 
     Command-line Usage:
         python cli_writer.py "text to fix"
@@ -22,7 +23,7 @@ def main():
         None: Prints the processed text to stdout or error message to stderr.
 
     Notes: 
-        The model uses a temperature setting of 0.3 for more deterministic output.
+        The model uses a temperature setting of 0.2 for more deterministic output.
     """
 
     # Check if user provided text as arguments
@@ -41,6 +42,13 @@ def main():
             options={'temperature': 0.3}
         )
         print(response['message']['content'].strip())
+
+        # Extract to CSV file.
+        data = { 'Input': [response['message']['content']] }
+        df = pd.DataFrame(data)
+        df.to_csv('raw_inputs.csv', mode='a', index=False, header=False)
+        print("Data saved to user_inputs.csv")
+
     except Exception as e:
         print(f"Error: {e}")
 
