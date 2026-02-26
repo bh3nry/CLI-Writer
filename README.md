@@ -9,7 +9,6 @@ Optimized for Apple Silicon using **Ollama** and **Qwen 2.5**.
 ## Features
 
 * Reviews inputs for minor spelling and grammatical errors. If specified, it also tries to mimic the style of a particular writing sample provided.
-* Uses Unified Memory for near-instant inference.
 * You can integrate with your terminal and set global commands to access the model from any directory.
 * All processing happens locally on your machine.
 
@@ -19,7 +18,12 @@ Optimized for Apple Silicon using **Ollama** and **Qwen 2.5**.
 
 #### 1. Model Configuration
 
-Create a file named `whatever_name_you_like.modelfile` with your system instructions and style samples, then register it with Ollama:
+- pip install ollama
+```zshrc
+ollama pull (whatever model you like) ---> eg: llama3.2:3b
+```
+
+At root level, create a file named `whatever_name_you_like.modelfile` with your system instructions and style samples, then register it with Ollama:
 
 ```bash
 ollama create my-text-editor -f pg_editor.modelfile
@@ -30,16 +34,17 @@ ollama create my-text-editor -f pg_editor.modelfile
 
 Ensure your Python script (`writer.py`) is executable:
 
-```bash
+```zshrc
 chmod +x "/path../../../..//writer.py"
 
 ```
 
 #### 3. Global Alias
 
-Add the following to your `~/.zshrc` to enable the `fixit` command *(or whatever you'd like to name it)*:
+Add the following to your `~/.zshrc` via the `nano ~/.zshrc` terminal command t
+This will enable the `fixit` command *(or whatever you'd like to name it)*:
 
-```bash
+```zshrc
 alias fixit='python3 "/path../../../../writer.py"'
 
 ```
@@ -52,7 +57,7 @@ alias fixit='python3 "/path../../../../writer.py"'
 
 Pass your text directly to the command:
 
-```bash
+```zshrc
 fixit "writing things down is importannt, and articuulatimg yourself helps you learn thingsz more better0;"
 
 ```
