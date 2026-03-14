@@ -6,70 +6,92 @@ import ollama
 import pandas as pd
 import boto3
 
+
+def cli_input(text_input: str) -> str:
+    """
+    Parses raw user input from the command line.
+
+    Args:
+        text_input (str): raw user input.
+    """
+    if len(sys.argv) > 1:
+        # All arguments given
+        text_input = ' '.join(sys.argv[1:])
+    elif not text_input.strip():
+        text_input = input("Enter text to edit: ")
+    if not text_input.strip():
+        return None
+    return text_input
+
+def model_output(user_input: str) -> str:
+    """
+    Interprets text inputs from the user, and returns 
+    a string representation of the models' response.
+
+    Args: 
+        user_input (str): user input.
+    """
+    response = ollama.chat(
+        model="clean-grammar",
+        messages=[{'role': 'user', 'content': user_input}],
+        options={'temperature': 0.0}
+    )
+    return response['message']['content'].strip()
+
+def write_to_csv(user_input: str, model_response: str) -> None:
+    """
+    Writes raw un-edited user inputs and model responses to a local
+    CSV file with pandas.
+
+    Args:
+        user_input (str): raw user input.
+        model_response (str): generated ai output.
+    """
+    data = { "raw_input": user_input, "refined_text": [model_response] }
+    df = pd.DataFrame(data)
+    df.to_csv('raw_inputs.csv', mode='a', index=False, header=True)
+    print("Success: Data written to CSV")
+
+def write_to_db(user_input: str, model_response: str) -> None:
+    """
+    Updated the database with raw user inputs, as well as outputted
+    text respones from the model.
+
+    Args:
+        user_input (str): raw user input.
+        model_response (str): generated ai output.
+    """
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('CLI-Writer')
+    random_pk = str(uuid.uuid4())
+
+    table.put_item(
+        Item= {
+            'writeId': random_pk,
+            'raw_input': user_input,
+            'ai_response': model_response,
+            })
+    print("Data has been written to the database.")
+
 def main():
     """
-    Uses the pg-editor Ollama model (based on llama3.2:3b) 
-    to process and fix text. For specific usage, the script 
-    assumes use of `Modelfiles`.
-
-    Command-line Usage:
-        - python cli_writer.py "text to fix"
-
-    Interactive Usage:
-        - python cli_writer.py
-        - Then enter text when prompted.
-
-    Raises:
-        Exception: 
-        - Error communicating with the Ollama model.
-        
-    Returns:
-        None: Prints the processed text to `stdout` or error message to `stderr`.
-
-    Notes: 
-        The model uses a temperature setting of 0.2 for more deterministic output.
+    Input text that requires ammendments directly from 
+    the command line. Review outputted text from the selected
+    model pulled from Ollama/Hugging-Face.
     """
 
-    # Check if user provided text as arguments
-    if len(sys.argv) > 1:
+    USER_PROMPT=""
+    text_to_edit = cli_input(USER_PROMPT)
 
-        # All arguments given
-        user_input = ''.join(sys.argv[1:])
-    else:
-        user_input = input("Text to fix: ")
-    if not user_input.strip():
-        return
+    if not text_to_edit:
+        print("Error: No input has been provided.")
+        sys.exit(1)
 
-    try:
-        response = ollama.chat(
-            model="pg-editor",
-            messages=[{'role': 'user', 'content': user_input}],
-            options={'temperature': 0.3}
-        )
-        print(response['message']['content'].strip())
+    new_response = model_output(text_to_edit)
+    write_to_csv(text_to_edit, new_response)
+    write_to_db(text_to_edit, new_response)
 
-        # Extract to local CSV file.
-        data = { 'Input': [response['message']['content']], 'Raw_Input': user_input }
-        df = pd.DataFrame(data)
-        df.to_csv('raw_inputs.csv', mode='a', index=False, header=True)
-
-        print("Data saved to user_inputs.csv")
-        print(response['message']['content'])
-
-        # Update Dynamo DB table
-        dynamodb = boto3.resource('dynamodb')
-        table = dynamodb.Table('CLI-Writer')
-        random_pk = str(uuid.uuid4())
-
-        table.put_item(
-            Item= {
-                'writeId': random_pk,
-                'raw_input': user_input,
-                'ai_response': response['message']['content'],
-                })
-
-    except IndexError as e:
-        print(f"Error: {e}")
+    print(new_response)
 
 if __name__ == "__main__":
     main()
