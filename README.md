@@ -44,7 +44,8 @@ alias fixit='python3 "/path../../../../writer.py"'
 
 ```
 
-*Reload with `source ~/.zshrc`.*
+If you need to make changes to the script, just load up your `nano ~/.zshrc` dir, and save the new write,
+then *Reload with `source ~/.zshrc`.*
 
 ---
 
