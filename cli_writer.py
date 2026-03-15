@@ -61,7 +61,7 @@ def write_to_csv(user_input: str, model_response: str) -> None:
     data = { "raw_input": user_input, "refined_text": [model_response] }
     df = pd.DataFrame(data)
     df.to_csv('raw_inputs.csv', mode='a', index=False, header=True)
-    print("Success: Data written to CSV")
+    print("Saved to CSV.")
 
 def write_to_db(user_input: str, model_response: str) -> None:
     """
@@ -82,7 +82,7 @@ def write_to_db(user_input: str, model_response: str) -> None:
             'raw_input': user_input,
             'ai_response': model_response,
             })
-    print("Data has been written to the database.")
+    print("Saved to DynamoDB.")
 
 def main():
     """
@@ -103,13 +103,11 @@ def main():
     print(new_response)
 
     # Optional Write to CSV/AWS-db
-    decision = input("Publish to DynamoDB? [y/n] ")
+    decision = input("Save to DynamoDB and CSV? [y/n] ")
     write_question(decision)
 
     write_to_csv(text_to_edit, new_response)
     write_to_db(text_to_edit, new_response)
-
-    print(new_response)
 
 if __name__ == "__main__":
     main()
