@@ -16,13 +16,19 @@ Optimized for Apple Silicon using **Ollama**: **llama3.1:8b**.
 * Optionally integrated with the CLI.
 * Local processing.
 * Syncs with AWS for training your own models based on your writing style/cadence.
+
 ---
 
 ### Setup
 
 #### 1. Model Configuration
 
-Create a file named `whatever_name_you_like.modelfile` with your system instructions and style samples, then register it with Ollama:
+- pip install ollama
+```zshrc
+ollama pull (whatever model you like) ---> eg: llama3.2:3b
+```
+
+At root level, create a file named `whatever_name_you_like.modelfile` with your system instructions and style samples, then register it with Ollama:
 
 ```bash
 ollama create my-text-editor -f pg_editor.modelfile
@@ -33,16 +39,17 @@ ollama create my-text-editor -f pg_editor.modelfile
 
 Ensure your Python script (`writer.py`) is executable:
 
-```bash
+```zshrc
 chmod +x "/path../../../..//writer.py"
 
 ```
 
 #### 3. Global Alias
 
-Add the following to your `~/.zshrc` to enable the `fixit` command *(or whatever you'd like to name it)*:
+Add the following to your `~/.zshrc` via the `nano ~/.zshrc` terminal command t
+This will enable the `fixit` command *(or whatever you'd like to name it)*:
 
-```bash
+```zshrc
 alias fixit='python3 "/path../../../../writer.py"'
 
 ```
@@ -56,7 +63,7 @@ then *Reload with `source ~/.zshrc`.*
 
 Pass your text directly to the command:
 
-```bash
+```zshrc
 fixit "writing things down is importannt, and articuulatimg yourself helps you learn thingsz more better0;"
 
 ```
