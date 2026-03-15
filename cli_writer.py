@@ -2,9 +2,20 @@
 
 import sys
 import uuid
+import time
 import ollama
 import pandas as pd
 import boto3
+
+def write_question(decision: str) -> None:
+    """
+    Small decision flow function to control DB writes.
+    """
+    answer_options = { 'yes': 'y', 'no': 'n' }
+    if decision != answer_options.get('yes'):
+        sys.exit(1)
+    print("Initiating DB write...")
+    time.sleep(3)
 
 
 def cli_input(text_input: str) -> str:
@@ -50,7 +61,7 @@ def write_to_csv(user_input: str, model_response: str) -> None:
     data = { "raw_input": user_input, "refined_text": [model_response] }
     df = pd.DataFrame(data)
     df.to_csv('raw_inputs.csv', mode='a', index=False, header=True)
-    print("Success: Data written to CSV")
+    print("Saved to CSV.")
 
 def write_to_db(user_input: str, model_response: str) -> None:
     """
@@ -71,7 +82,7 @@ def write_to_db(user_input: str, model_response: str) -> None:
             'raw_input': user_input,
             'ai_response': model_response,
             })
-    print("Data has been written to the database.")
+    print("Saved to DynamoDB.")
 
 def main():
     """
@@ -87,11 +98,16 @@ def main():
         print("Error: No input has been provided.")
         sys.exit(1)
 
+    # Model Output
     new_response = model_output(text_to_edit)
+    print(new_response)
+
+    # Optional Write to CSV/AWS-db
+    decision = input("Save to DynamoDB and CSV? [y/n] ")
+    write_question(decision)
+
     write_to_csv(text_to_edit, new_response)
     write_to_db(text_to_edit, new_response)
-
-    print(new_response)
 
 if __name__ == "__main__":
     main()

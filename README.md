@@ -1,16 +1,21 @@
 # Lightweight Writing Editor for Mac OS.
 
-A zippy, local writing assistant that edits text to match any desired prose style. 
+A zippy, local writing assistant that edits text for spelling/grammar/punctuation. 
 
-Optimized for Apple Silicon using **Ollama** and **Qwen 2.5**.
+Optimized for Apple Silicon using **Ollama**: **llama3.1:8b**.
+
+<p align="left">
+  <img src="assets/usage.gif" alt="CLI-Writer demo" width="500" />
+</p>
 
 ---
 
 ## Features
 
-* Reviews inputs for minor spelling and grammatical errors. If specified, it also tries to mimic the style of a particular writing sample provided.
-* You can integrate with your terminal and set global commands to access the model from any directory.
-* All processing happens locally on your machine.
+* Reviews inputs for minor spelling and grammatical errors.
+* Optionally integrated with the CLI.
+* Local processing.
+* Syncs with AWS for training your own models based on your writing style/cadence.
 
 ---
 
@@ -71,4 +76,4 @@ The tool will output the corrected version directly to your terminal.
 
 * **OS:** macOS (Apple Silicon)
 * **Backend:** [Ollama](https://ollama.ai/)
-* **Model:** `qwen2.5:3b` or `qwen2.5:1.5b`
+* **Model:** `llama3.1:8b` or `qwen2.5:1.5b`
