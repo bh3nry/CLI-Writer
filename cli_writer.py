@@ -2,9 +2,20 @@
 
 import sys
 import uuid
+import time
 import ollama
 import pandas as pd
 import boto3
+
+def write_question(decision: str) -> None:
+    """
+    Small decision flow function to control DB writes.
+    """
+    answer_options = { 'yes': 'y', 'no': 'n' }
+    if decision != answer_options.get('yes'):
+        sys.exit(1)
+    print("Initiating DB write...")
+    time.sleep(3)
 
 
 def cli_input(text_input: str) -> str:
@@ -87,7 +98,14 @@ def main():
         print("Error: No input has been provided.")
         sys.exit(1)
 
+    # Model Output
     new_response = model_output(text_to_edit)
+    print(new_response)
+
+    # Optional Write to CSV/AWS-db
+    decision = input("Publish to DynamoDB? [y/n] ")
+    write_question(decision)
+
     write_to_csv(text_to_edit, new_response)
     write_to_db(text_to_edit, new_response)
 
