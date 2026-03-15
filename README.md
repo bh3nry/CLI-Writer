@@ -69,4 +69,4 @@ The tool will output the corrected version directly to your terminal.
 
 * **OS:** macOS (Apple Silicon)
 * **Backend:** [Ollama](https://ollama.ai/)
-* **Model:** `qwen2.5:3b` or `qwen2.5:1.5b`
+* **Model:** `llama3.1:8b` or `qwen2.5:1.5b`
